@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index"
   },
   "keywords": [],
   "author": "",
@@ -13,6 +14,7 @@
     "body-parse": "^0.1.0",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
-    "express-handlebars": "^6.0.7"
+    "express-handlebars": "^6.0.7",
+    "socket.io": "^3.1.1"
   }
 }

@@ -1,1 +1,111 @@
-{{{Home}}}
+
+
+<section>
+    <main>
+        <div class="left">
+            <div class="cont-pictures">
+                <div class="up">
+                    <h3>Nigger 1</h3>
+                </div>
+                <div class="down">
+                    
+                    <h3>Nigger 2</h3>
+                </div>
+            </div>
+
+        </div>
+        <div class="right">
+            <header>
+                <div id="peoples"><h4>peoples: </h4><i class="fa-solid fa-user"></i> </div>
+                <div><div class="button"><i class="fa-solid fa-user-plus"></i></div><h4>pickes: 0</h4></div>
+            </header>
+            <div class="center">
+                <div class="cont-chat">
+                    <h3>Chat</h3>
+                    <div class="list-chat">
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="foolter">
+                <div class="cont-input">
+                    <input type="text" placeholder="Mensagem">
+                    <button class="button" onclick="writeMensage()"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js" integrity="sha512-MgkNs0gNdrnOM7k+0L+wgiRc5aLgl74sJQKbIWegVIMvVGPc1+gc1L2oK9Wf/D9pq58eqIJAxOonYPVE5UwUFA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    var socket = io(window.location.href);
+    let mensagens=[];
+    let nome  = "undefine";
+    let color = "undefine"
+    //functions
+    function renderMensager()
+    {
+       for(mensagem of mensagens){
+            AddMensagems(mensagem);
+        }
+    }
+    function AddMensagems(data){
+        $(".list-chat").append(
+            `
+            <div class="mensagem">
+                <div class="info"><h1 style="color:${data.color}">${data.auther}</h1></div>
+                <div class="body"><p>${data.message}</p></div>
+            </div>
+            `
+        );
+        chatBox = $('.list-chat');
+        chatBox.scrollTop(chatBox.prop('scrollHeight'));
+    }
+    function createMensage(){
+        let dataMensagems = {
+            auther:nome,
+            message:$("input").val(),
+            color,
+        }
+        socket.emit("writeMensagem",dataMensagems);
+        console.log("Enviar mensagem",dataMensagems);
+        $("input").val('');
+       
+    }
+    
+    //socket
+    socket.on("novaMensagem",mensagem=>{
+        mensagens.push(mensagem);
+        AddMensagems(mensagem);
+    })
+    socket.on('dataServer',(info)=>{
+        console.log(info)
+        let infoServer = info.infoServer;
+        let me  = info.me;
+        nome = nome=='undefine'?me.nome:nome;
+        color= color=='undefine'?me.color:color;
+
+        $("div#peoples h4").text("peoples: "+infoServer.conected)
+        if(mensagens.length != infoServer.mensagens.length)
+        {
+            mensagens =  infoServer.mensagens;
+            console.log(mensagens);
+            renderMensager()
+        }
+        
+    })
+    socket.on("novaMensagem",mensagem=>{
+       // AddMensagems(mensagem);
+    })
+    
+    //eventos
+    document.addEventListener("keydown",(event)=>{
+        let keycode = event.keyCode;
+        //console.log("evento de keydow "+keycode)
+        if(keycode == 13)
+        {
+            createMensage();
+        }
+
+    })
+</script>
