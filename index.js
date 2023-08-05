@@ -65,7 +65,7 @@ io.on('connection', socket=>{
     })
 })
 
-server.listen(port,console.log("aberto  em https://localhost:"+port));
+server.listen(port,console.log("aberto  em https://localhost:"+process.env.PORT));
 
 function createPaletColor(teme){
     let htmlReturn = `*{\n`;
