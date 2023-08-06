@@ -84,6 +84,7 @@ main div.right div.center  div.cont-chat div.list-chat div.mensagem div p
     color: var(--text-color2);
     margin: 5px 20px;
     font-size: 1.2em;
+    word-wrap: break-word;
 }
 main div.right div.center  div.cont-chat div.list-chat div.mensagem div h1
 {
