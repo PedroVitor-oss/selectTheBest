@@ -1,6 +1,19 @@
 const { app,server,io } = require("./src/app");
-const { createHome,createStyleHome } = require("./components/home");
 const { port,colors,nomes,colorsForUser } = require("./config.json");
+// Configurando o armazenamento dos arquivos enviados
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, 'src/public/img/uploads/');
+    },
+    filename: (req, file, cb) => {
+      cb(null, file.originalname);
+    }
+  });
+  
+  const upload = multer({ storage });
+
 let infoServer = {
     conected:0,
     peoples:[],
@@ -9,14 +22,16 @@ let infoServer = {
     conparation:[],
 }
 
+  
 app.get("/",(req,res)=>{
 
     const isMobile = req.headers['user-agent'].includes("Mobile");
     
     let palet = createPaletColor(colors.dark);
+  
     res.render("home",
     {
-        title:"ifode - home",
+        title:"the best cotton picker",
         isMobile,
         htmlStyles:[
             {css:palet}
@@ -63,6 +78,38 @@ io.on('connection', socket=>{
         }
         // infoServer.peoples.splice(getForId(socket.id,infoServer).index);
     })
+})
+
+app.get("/add",(req,res)=>{
+    let palet = createPaletColor(colors.dark);
+
+    res.render("addPicker",{
+        title:"addpicker",
+        htmlStyles:[
+            {css:palet}
+        ],
+    });
+})
+app.post("/add",upload.single('file'),(req,res)=>{
+    const link = req.body.link;
+    const file = req.file;
+    if(link!='')
+    {
+        console.log("imagem com o link");
+        infoServer.pickes.push({
+            src:link
+        })
+    }else{
+        console.log("imagem com o upload");
+        const filePath = path.join(__dirname, 'src/public/img/uploads', file.filename);
+        infoServer.pickes.push({
+            src:"/img/"+file.filename,
+
+        })
+    }
+    res.status(200).json({ message: 'Arquivo e link recebidos com sucesso!' });
+    io.emit("newPicker",infoServer.pickes.length);
+
 })
 
 server.listen(port,console.log("aberto  em https://localhost:"+process.env.PORT));

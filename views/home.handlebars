@@ -1,4 +1,91 @@
+<style>
+    div.fosco
+    {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #3335;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    div.cont-addpicker
+    {
+        background-color: var(--background2);
+        width: 30vw;
+        height: 30vw;
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    div.cont-addpicker header
+    {
+        width: 90%;;
+        display:flex;
+        flex-direction: row;
+       justify-content: space-between;
+       color: var(--text-color2);
+    align-items: center;
+        padding: 10px 20px;
+    }
+    div.cont-addpicker header button:hover
+    {
+        color:#f12c4c;
+    }
+    div.cont-addpicker header button
+    {
+        margin: 5px 0;
+        background-color: transparent;
+        border:none;
+        color: var(--text-color2);
+        font-size: 2em;
+        transition: .2s;
+    }
+    div.cont-addpicker div.cont-img
+    {
+        display: none;
+        flex: 5;
+    }
+    div.cont-addpicker div
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: var(--background3);
+        margin-top: 10px;
+        border-radius: 20px;
+        width: 90%;
+        flex:1;
+    }
+    div.cont-addpicker div.cont-input-link
+    {
+        max-height: 40px;
+        
+    }
+    div.cont-addpicker div.cont-input-link input
+    {
+        width: 80%;
+        background-color: transparent;
+        border: none;
+        color: var(--text-color);
+        font-size:1em;
+        outline: none;
+    }
+    div.cont-addpicker button.submit
+    {
+        background-color: var(--destaque-color2);
+        border: none;
+        border-radius: 20px;
+        height: 40px;
+        width: 50%;
+        margin: 5px 0;
+        color: var(--text-color);
 
+    }
+</style>
 
 <section>
     <main>
@@ -17,7 +104,7 @@
         <div class="right">
             <header>
                 <div id="peoples"><h4>peoples: </h4><i class="fa-solid fa-user"></i> </div>
-                <div><div class="button"><i class="fa-solid fa-user-plus"></i></div><h4>pickes: 0</h4></div>
+                <div id="pickers"><div class="button"><i class="fa-solid fa-user-plus"></i></div><h4>pickes: 0</h4></div>
             </header>
             <div class="center">
                 <div class="cont-chat">
@@ -37,6 +124,8 @@
     </main>
 </section>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js" integrity="sha512-MgkNs0gNdrnOM7k+0L+wgiRc5aLgl74sJQKbIWegVIMvVGPc1+gc1L2oK9Wf/D9pq58eqIJAxOonYPVE5UwUFA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<!-- socket conection -->
 <script>
     var socket = io(window.location.href);
     let mensagens=[];
@@ -94,10 +183,9 @@
         }
         
     })
-    socket.on("novaMensagem",mensagem=>{
-       // AddMensagems(mensagem);
+    socket.on('newPicker',data=>{
+        $("div#pickers h4").text(`pickes: ${data}`)
     })
-    
     //eventos
     document.addEventListener("keydown",(event)=>{
         let keycode = event.keyCode;
@@ -108,4 +196,102 @@
         }
 
     })
+</script>
+<!-- formularion para add black -->
+<script>
+    const FormAddPicker = `
+        <div class="cont-addpicker">
+    <header>
+        <h1>add black</h1>
+    <button id="close"><i class="fa-solid fa-xmark"></i></button>
+    </header>
+    <div class="cont-img">
+        <img src="" id="preview-image" alt="">
+    </div>
+    <div class="cont-upload">
+        <input type="file" name="img" id="image-upload">
+    </div>
+    <div class="cont-input-link">
+        <input type="tyext" name="link" id="image-link"  placeholder="Link...">
+    </div>
+    <button class="submit" onclick="uploadFile()">Adicionar</button>
+</div>
+    `
+    $("i.fa-user-plus").click(()=>{
+        $("body").append(`<div class="fosco">${FormAddPicker}</div>`);
+        $("#close").click(()=>{$("div.fosco").remove();})
+        $("input").change(()=>{
+            preview();
+        })
+    })
+       
+function preview() {
+    const imageLink = document.getElementById("image-link").value;
+    const imageUpload = document.getElementById("image-upload");
+    const previewImage = document.getElementById("preview-image");
+    $("div.cont-img").css("display","flex");
+    if (imageLink) {
+        // If a link is provided, update the 'src' attribute of the image with the link
+        previewImage.src = imageLink;
+    } else if (imageUpload.files && imageUpload.files[0]) {
+        // If an image is uploaded, create a URL object and set it as the image source
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+            previewImage.src = event.target.result;
+        };
+
+        reader.readAsDataURL(imageUpload.files[0]);
+    } else {
+        // Handle the case where no link or image is provided
+        alert("Please add a link or upload an image.");
+    }
+}
+
+function uploadFile() {
+    if($('input#image-link').val()!=''){
+        const data = {
+        text:$('input#image-link').val(),
+      };
+
+      fetch('/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+      .then(responseData => {
+        // Lógica para lidar com a resposta do servidor, se necessário
+        console.log('Resposta do servidor:', responseData);
+        $("div.fosco").remove();
+      })
+      .catch(error => {
+        console.error('Erro ao enviar a string:', error);
+        alert("Não foi possivel enviar o link");
+      });
+    }else{
+    
+      const fileInput = document.getElementById('image-upload');
+      const file = fileInput.files[0];
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      fetch('/add', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        // Lógica para lidar com a resposta do servidor, se necessário
+        console.log('Arquivo enviado com sucesso!');
+        $("div.fosco").remove();
+      })
+      .catch(error => {
+        console.error('Erro ao enviar o arquivo:', error);
+        alert("Não foi possivel enviar o arquivo");
+      });
+    }
+}
 </script>
