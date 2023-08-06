@@ -116,7 +116,7 @@
             </div>
             <div class="foolter">
                 <div class="cont-input">
-                    <input type="text" placeholder="Mensagem">
+                    <input type="text" placeholder="Mensagem" maxlength="200">
                     <button class="button" onclick="writeMensage()"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -156,8 +156,13 @@
             message:$("input").val(),
             color,
         }
+        if($("input").val().length<200)
+        {
         socket.emit("writeMensagem",dataMensagems);
         console.log("Enviar mensagem",dataMensagems);
+        }else{
+            alert("mensagem longa de mais ");
+        }
         $("input").val('');
        
     }
