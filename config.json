@@ -1,0 +1,35 @@
+{
+    "port":8000,
+    "title":"app node",
+    "nomes":[
+        "mr. paulo",
+        "jacinto pinto ",
+        "lima mei",
+        "daocu ",
+        "calvo",
+        "baiano",
+        "calango"
+
+    ],
+    "colors":{
+        "dark":{
+            "background"     :"#0f1923",
+            "background2"    :"#333344",
+            "background3"    :"#222233",
+            "text-color"     :"#ffffff",
+            "text-color2"    :"#bcbfc7",
+            "destaque-color"  :"#f12c4c",
+            "destaque-color2":"#04d47c",
+            "destaque-color3":"#ffd859",
+            "border"         :"#323b45"
+        }
+    },
+    "colorsForUser":[
+        "#FF0000", 
+        "#00FF00", 
+        "#0000FF", 
+        "#FFFF00", 
+        "#FF00FF", 
+        "#00FFFF"
+    ]
+}
